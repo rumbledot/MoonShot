@@ -7,16 +7,17 @@ using Cinemachine;
 public class PlayerRocketController : MonoBehaviour
 {
     [SerializeField]
-    Transform playerInside;
-    public Transform PlayerInside {
-        get { return playerInside; }
-    }
+    GameObject playerDummy;
     [SerializeField]
     Transform playerLanding;
     public Transform PlayerLanding
     {
         get { return playerLanding; }
     }
+
+    float timeToDeath = 500f;
+    float timeToDeathCounter = 0f;
+    bool isOutOfBound = false;
 
     [SerializeField]
     GameObject TakeOffFX, BoostFX, IdleFX;
@@ -42,6 +43,7 @@ public class PlayerRocketController : MonoBehaviour
         thisBody = gameObject.GetComponent<GravityBodyController>();
         rocketRB = GetComponent<Rigidbody>();
         DisableFXs();
+        ShowPlayerDummy(false);
         this.enabled = false;
     }
     private void OnEnable()
@@ -57,6 +59,10 @@ public class PlayerRocketController : MonoBehaviour
         {
             GameController.instance.displayText("Planet detected... press Space to Land");
             thisBody.DetectGround();
+        }
+        if (isOutOfBound)
+        {
+            CheckOutOfBound();
         }
     }
     private void FixedUpdate()
@@ -90,6 +96,7 @@ public class PlayerRocketController : MonoBehaviour
                 GameController.instance.displayGuide("Player");
                 player.SetActive(true);
                 player.GetComponent<GravityBodyController>().AttachBody(stats.NearPlanet);
+                ShowPlayerDummy(false);
                 player.transform.position = playerLanding.position;
                 player.transform.parent = null;
                 player.GetComponent<PlayerController>().enabled = true;
@@ -154,5 +161,38 @@ public class PlayerRocketController : MonoBehaviour
         TakeOffFX.SetActive(true);
         BoostFX.SetActive(true);
         isLanded = false;
+    }
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.tag == "Universe" && isOutOfBound)
+        {
+            isOutOfBound = false;
+            timeToDeathCounter = 0;
+            stats.displayText("back to safety");
+        }
+    }
+    private void OnTriggerExit(Collider col)
+    {
+        if (col.gameObject.tag == "Universe" && !isOutOfBound)
+        {
+            isOutOfBound = true;
+            stats.displayText("turn back or DIE!");
+        }
+    }
+    private void CheckOutOfBound()
+    {
+        if (isOutOfBound)
+        {
+            timeToDeathCounter++;
+            stats.displayText("Time to imminent death " + timeToDeathCounter.ToString());
+            if (timeToDeathCounter >= timeToDeath)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+    public void ShowPlayerDummy(bool v)
+    {
+        playerDummy.SetActive(v);
     }
 }

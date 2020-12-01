@@ -11,12 +11,8 @@ public class PlayerController : MonoBehaviour
     float x, y, z;
     bool isJump = false,
         isGrounded,
-        isNearRocket = false,
-        isOutOfBound = false;
-    public bool isInsideRocket = false;
-
-    float timeToDeath = 500f;
-    float timeToDeathCounter = 0f;
+        isNearRocket = false;
+    public bool isInsideRocket = false;  
 
     float speed = 12f;
     float h, v, verticalLookRotation;
@@ -61,7 +57,6 @@ public class PlayerController : MonoBehaviour
         PlayerGrounded();
         Jump();
         Animate();
-        CheckOutOfBound();
     }
     private void FixedUpdate()
     {
@@ -74,12 +69,11 @@ public class PlayerController : MonoBehaviour
             stats.displayText("Boaring rocket");
             GameController.instance.displayGuide("Rocket");
             thisBody.DetachBody();
-            gameObject.transform.position = stats.Rocket.GetComponent<PlayerRocketController>().PlayerInside.position;
-            gameObject.transform.parent = stats.Rocket.transform;
             isInsideRocket = true;
             stats.displayText("Press SPACE to take off");
             CinemachineBrain.SoloCamera = vcam2;
             stats.Rocket.GetComponent<PlayerRocketController>().enabled = true;
+            stats.Rocket.GetComponent<PlayerRocketController>().ShowPlayerDummy(true);
             gameObject.SetActive(false);
         }
     }
@@ -160,18 +154,6 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("Running", false);
         }
     }
-    private void CheckOutOfBound()
-    {
-        if (isOutOfBound)
-        {
-            timeToDeathCounter++;
-            stats.displayText("Time to imminent death " + timeToDeathCounter.ToString());
-            if (timeToDeathCounter >= timeToDeath)
-            {
-                Destroy(gameObject);
-            }
-        }
-    }
     private void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.tag == "PlayerRocket")
@@ -179,23 +161,12 @@ public class PlayerController : MonoBehaviour
             isNearRocket = true;
             stats.displayText("press 'E' to enter rocket");
         }
-        if (col.gameObject.tag == "Universe")
-        {
-            isOutOfBound = false;
-            timeToDeathCounter = 0;
-            stats.displayText("back to safety");
-        }
     }
     private void OnTriggerExit(Collider col)
     {
         if (col.gameObject.tag == "PlayerRocket")
         {
             isNearRocket = false;
-        }
-        if (col.gameObject.tag == "Universe")
-        {
-            isOutOfBound = true;
-            stats.displayText("turn back or DIE!");
         }
     }
     private void OnCollisionEnter(Collision col)
