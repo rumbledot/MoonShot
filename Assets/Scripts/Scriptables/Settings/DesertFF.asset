@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 740573293560b9d4e8685172e327fc7c, type: 3}
+  m_Name: DesertFF
+  m_EditorClassIdentifier: 
+  biomeObjects:
+  - {fileID: 4281707189576022683, guid: 74ca802209a58c24fb5a026364667c60, type: 3}
+  - {fileID: 917975739909952216, guid: e36c5af4e2f1e5840aeed506db60303a, type: 3}
+  - {fileID: 158296271024336252, guid: 518932c22dc32774fbfcf34ebc260449, type: 3}
+  density: 0
