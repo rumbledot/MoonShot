@@ -1,7 +1,7 @@
 # MoonShot
 GameOff 2020 gamejam
 
-Thanks to [Sebastian Lague](https://www.youtube.com/playlist?list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8) YouTube channel and [CatLike coding](https://catlikecoding.com/unity/tutorials/).
+References from [Sebastian Lague](https://www.youtube.com/playlist?list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8) YouTube channel and [CatLike coding](https://catlikecoding.com/unity/tutorials/).
 
 A two weeks worth of a procedurally generated moon farming game prototype.
 Player can jump from moon to moon using his trustee 'you-f-oh'.
