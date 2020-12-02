@@ -74,6 +74,7 @@ public class PlayerController : MonoBehaviour
             CinemachineBrain.SoloCamera = vcam2;
             stats.Rocket.GetComponent<PlayerRocketController>().enabled = true;
             stats.Rocket.GetComponent<PlayerRocketController>().ShowPlayerDummy(true);
+            stats.Rocket.GetComponent<Rigidbody>().isKinematic = false;
             gameObject.SetActive(false);
         }
     }

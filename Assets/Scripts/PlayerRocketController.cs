@@ -42,6 +42,7 @@ public class PlayerRocketController : MonoBehaviour
         player = stats.Player;
         thisBody = gameObject.GetComponent<GravityBodyController>();
         rocketRB = GetComponent<Rigidbody>();
+        rocketRB.isKinematic = true;
         DisableFXs();
         ShowPlayerDummy(false);
         this.enabled = false;
@@ -67,7 +68,10 @@ public class PlayerRocketController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rocketRB.MovePosition(rocketRB.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
+        if (!isLanded)
+        {
+            rocketRB.MovePosition(rocketRB.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
+        }
     }
     private void HandleInputForRocketOperation()
     {
@@ -75,6 +79,7 @@ public class PlayerRocketController : MonoBehaviour
         {
             if (isLanded)
             {
+                rocketRB.isKinematic = false;
                 thisBody.DetachBody();
                 TookOffFXs();
                 moveDir = new Vector3(0, 200f, 0).normalized;
@@ -82,6 +87,7 @@ public class PlayerRocketController : MonoBehaviour
             }
             else if (!isLanded)
             {
+                moveAmount = Vector3.zero;
                 thisBody.AttachBody(stats.NearPlanet);
                 isLanded = true;
                 DisableFXs();
@@ -92,6 +98,7 @@ public class PlayerRocketController : MonoBehaviour
         {
             if (isLanded)
             {
+                rocketRB.isKinematic = true;
                 GameController.instance.displayText("Exiting rocket");
                 GameController.instance.displayGuide("Player");
                 player.SetActive(true);
@@ -141,8 +148,8 @@ public class PlayerRocketController : MonoBehaviour
             {
                 transform.Rotate(-Vector3.forward * Time.deltaTime * speed * 3, Space.Self);
             }
+            PropelRocket();
         }
-        PropelRocket();
     }
     void PropelRocket()
     {

@@ -41,9 +41,13 @@ public class GravityBodyController : MonoBehaviour
     }
     private void Update()
     {
-        if (!isDetach && !isStatic)
+        if (!isDetach && !isStatic && TheSurface)
         {
             TheSurface.KeepUpright(transform, keepUpright);
+        }
+        else if (TheSurface == null)
+        {
+            DetachBody();
         }
     }
     public void DetachBody()
