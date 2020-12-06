@@ -11,6 +11,12 @@ public class GameController : MonoBehaviour
     private bool lockScreen = false;
     [SerializeField]
     GameObject infoText, guideText;
+    [SerializeField]
+    Camera[] cameras;
+    [SerializeField]
+    GameObject miniMap;
+
+    public enum WhosCamera { Ken, Rocket }
 
     bool nearAPlanet;
     public bool NearAPlanet
@@ -134,5 +140,25 @@ public class GameController : MonoBehaviour
                 break;
         }
         guideText.GetComponent<Text>().text = content;
+    }
+    public void SetCameraTo(WhosCamera who)
+    {
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            cameras[i].enabled = false;
+        }
+        switch (who)
+        {
+            case WhosCamera.Ken:
+                cameras[(int)WhosCamera.Ken].enabled = true;
+                break;
+            case WhosCamera.Rocket:
+                cameras[(int)WhosCamera.Rocket].enabled = true;
+                break;
+            default:
+                cameras[(int)WhosCamera.Ken].enabled = true;
+                break;
+        }
+        miniMap.SetActive(cameras[(int)WhosCamera.Ken].enabled);
     }
 }

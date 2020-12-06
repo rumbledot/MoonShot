@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ForestColor
   m_EditorClassIdentifier: 
   planetMaterial: {fileID: 2100000, guid: 1ebac9b7027b1e841bda11b8972e80e6, type: 2}
+  atmosphereMaterial: {fileID: 2100000, guid: 3cb764df24e799e4fbca4551cb826e1b, type: 2}
   biomeColorSettings:
     biomes:
     - gradient:
@@ -133,6 +134,54 @@ MonoBehaviour:
     noiseOffset: 0.64
     noiseStrength: 0.06
     blendAmount: 0.549
+  atmosphereColorSettings:
+    streaks:
+    - cloudColor: {r: 0.6707013, g: 0.8755375, b: 0.9056604, a: 0.6117647}
+      tint: {r: 1, g: 0, b: 0, a: 1}
+      startHeight: 0
+      tintPercent: 0
+    - cloudColor: {r: 1, g: 1, b: 1, a: 0.84313726}
+      tint: {r: 1, g: 0.9312867, b: 0, a: 1}
+      startHeight: 0.245
+      tintPercent: 0
+    - cloudColor: {r: 0.67058825, g: 0.8745099, b: 0.9058824, a: 0.8235294}
+      tint: {r: 1, g: 0, b: 0, a: 1}
+      startHeight: 0.369
+      tintPercent: 0
+    - cloudColor: {r: 1, g: 1, b: 1, a: 1}
+      tint: {r: 1, g: 0.9294118, b: 0, a: 1}
+      startHeight: 0.581
+      tintPercent: 0
+    - cloudColor: {r: 0.67058825, g: 0.8745099, b: 0.9058824, a: 0.72156864}
+      tint: {r: 1, g: 0, b: 0, a: 1}
+      startHeight: 0.839
+      tintPercent: 0
+    - cloudColor: {r: 1, g: 1, b: 1, a: 0.68235296}
+      tint: {r: 1, g: 0.9294118, b: 0, a: 1}
+      startHeight: 1
+      tintPercent: 0
+    noise:
+      filterType: 0
+      simpleNoiseSettings:
+        strength: 1
+        numLayers: 3
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        center: {x: 0, y: 0, z: 0}
+        minValue: 0
+      rigidNoiseSettings:
+        strength: 1
+        numLayers: 3
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        center: {x: 0, y: 0, z: 0}
+        minValue: 0
+        weightMultiplyer: 0.8
+    noiseOffset: 0
+    noiseStrength: 0
+    blendAmount: 0
   oceanColor:
     serializedVersion: 2
     key0: {r: 0.29169634, g: 0.38286403, b: 0.6509434, a: 1}

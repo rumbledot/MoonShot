@@ -6,14 +6,9 @@ public class ProjectileController : MonoBehaviour
 {
     private float height, oldHeight;
 
-    private Cinemachine.CinemachineImpulseSource source;
-
     private void Awake()
     {
         height = transform.localPosition.y;
-
-        source = GetComponent<Cinemachine.CinemachineImpulseSource>();
-        source.GenerateImpulse(Camera.main.transform.forward);
 
         Destroy(gameObject, 3f);
     }

@@ -56,3 +56,4 @@ MonoBehaviour:
         center: {x: 0, y: 0, z: 0}
         minValue: 0
         weightMultiplyer: 0
+  hasAtmosphere: 1

@@ -48,4 +48,9 @@ public class ShapeGenerator
         elevation = settings.planetRadius * (1 + elevation);
         return elevation;
     }
+    public float GetScaledAtmosphere()
+    {
+        float elevation = settings.planetRadius * 2f;
+        return elevation;
+    }
 }

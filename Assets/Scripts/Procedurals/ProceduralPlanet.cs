@@ -29,7 +29,14 @@ public class ProceduralPlanet : MonoBehaviour
 
     [SerializeField, HideInInspector]
     MeshFilter[] meshFilter;
+    MeshFilter[] atmoMeshFilter;
+
     TerrainFace[] terrainFaces;
+    TerrainBiome[] terrainBiomes;
+    AtmosphereFace[] atmoFaces;
+
+    GameObject biomesContainer;
+    bool hasAtmosphere;
 
     private void Awake()
     {
@@ -37,15 +44,26 @@ public class ProceduralPlanet : MonoBehaviour
     }
     void Initialized()
     {
+        hasAtmosphere = shapeSettings.hasAtmosphere;
+
         shapeGenerator.UpdateSettings(shapeSettings);
         colorGenerator.UpdateSettings(colorSettings);
         ffGenerator.UpdateSettings(ffSettings);
 
         if (meshFilter == null || meshFilter.Length == 0)
         { 
-            meshFilter = new MeshFilter[6];            
+            meshFilter = new MeshFilter[6];
         }
         terrainFaces = new TerrainFace[6];
+        terrainBiomes = new TerrainBiome[6];
+
+        ClearBiomes();
+
+            if (atmoMeshFilter == null || atmoMeshFilter.Length == 0)
+            {
+                atmoMeshFilter = new MeshFilter[6];
+            }
+            atmoFaces = new AtmosphereFace[6];
 
         Vector3[] direction = { 
             Vector3.up,
@@ -58,28 +76,62 @@ public class ProceduralPlanet : MonoBehaviour
 
         for (int i = 0; i < 6; i++)
         {
-            if (meshFilter[i] == null)
-            {
-                GameObject meshObj = new GameObject("mesh " + i.ToString());
-                meshObj.transform.parent = transform;
-                meshObj.tag = "TheSurface";
-                meshObj.layer = LayerMask.NameToLayer("TheSurface");
-
-                meshObj.AddComponent<MeshRenderer>();
-                meshObj.AddComponent<MeshCollider>();
-                
-                meshFilter[i] = meshObj.AddComponent<MeshFilter>();
-                meshFilter[i].sharedMesh = new Mesh();
-            }
-            meshFilter[i].GetComponent<MeshRenderer>().sharedMaterial = colorSettings.planetMaterial;
-
-            terrainFaces[i] = new TerrainFace(shapeGenerator, meshFilter[i].sharedMesh, resolution, direction[i], transform, ffGenerator, i);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
-            
-            meshFilter[i].GetComponent<MeshCollider>().sharedMesh = meshFilter[i].sharedMesh;
-            
-            meshFilter[i].gameObject.SetActive(renderFace);
+            InitializeMesh(direction, i, renderFace);
+            InitializeBiomes(i);
+
+            if (hasAtmosphere)
+            {
+                InitializeAtmosphere(direction, i, renderFace);
+            }
         }
+    }
+    private void InitializeMesh(Vector3[] direction, int i, bool renderFace)
+    {
+        if (meshFilter[i] == null)
+        {
+            GameObject meshObj = new GameObject("mesh " + i.ToString());
+            meshObj.transform.parent = transform;
+            meshObj.transform.position = transform.position;
+
+            meshObj.tag = "TheSurface";
+            meshObj.layer = LayerMask.NameToLayer("TheSurface");
+
+            meshObj.AddComponent<MeshRenderer>();
+            meshObj.AddComponent<MeshCollider>();
+
+            meshFilter[i] = meshObj.AddComponent<MeshFilter>();
+            meshFilter[i].sharedMesh = new Mesh();
+        }
+        meshFilter[i].GetComponent<MeshRenderer>().sharedMaterial = colorSettings.planetMaterial;
+
+        terrainFaces[i] = new TerrainFace(shapeGenerator, meshFilter[i].sharedMesh, resolution, direction[i], transform, ffGenerator, i);
+
+        meshFilter[i].GetComponent<MeshCollider>().sharedMesh = meshFilter[i].sharedMesh;
+        meshFilter[i].gameObject.SetActive(renderFace);
+    }
+    void InitializeBiomes(int i)
+    {
+        terrainBiomes[i] = new TerrainBiome(ffSettings, meshFilter[i].sharedMesh);
+    }
+    private void InitializeAtmosphere(Vector3[] direction, int i, bool renderFace)
+    {
+        if (atmoMeshFilter[i] == null)
+        {
+            GameObject atmoMeshObj = new GameObject("atmo mesh " + i.ToString());
+            atmoMeshObj.transform.parent = transform;
+            atmoMeshObj.transform.position = transform.position;
+
+            atmoMeshObj.AddComponent<MeshRenderer>();
+
+            atmoMeshFilter[i] = atmoMeshObj.AddComponent<MeshFilter>();
+            atmoMeshFilter[i].sharedMesh = new Mesh();
+        }
+
+        atmoMeshFilter[i].GetComponent<MeshRenderer>().sharedMaterial = colorSettings.atmosphereMaterial;
+        atmoFaces[i] = new AtmosphereFace(shapeGenerator, atmoMeshFilter[i].sharedMesh, resolution, direction[i], i);
+
+        atmoMeshFilter[i].gameObject.SetActive(renderFace);
     }
     public void GeneratePlanet()
     {
@@ -109,7 +161,7 @@ public class ProceduralPlanet : MonoBehaviour
         if (autoUpdate)
         {
             Initialized();
-            //GenerateBiomes();
+            GenerateBiomes();
         }
     }
     private void GenerateMesh()
@@ -119,6 +171,7 @@ public class ProceduralPlanet : MonoBehaviour
             if (meshFilter[i].gameObject.activeSelf)
             {
                 terrainFaces[i].ConstructMesh();
+                if (hasAtmosphere) atmoFaces[i].ConstructMesh();
             }
         }
 
@@ -128,29 +181,33 @@ public class ProceduralPlanet : MonoBehaviour
     private void GenerateColors()
     {
         colorGenerator.UpdateColors();
+        colorGenerator.UpdateCloudColors();
         for (int i = 0; i < 6; i++)
         {
             if (meshFilter[i].gameObject.activeSelf)
             {
                 terrainFaces[i].UpdateUVs(colorGenerator);
+                if (hasAtmosphere) atmoFaces[i].UpdateUVs(colorGenerator);
             }
         }
     }
-    private void GenerateBiomes()
+    void GenerateBiomes()
     {
-        TerrainBiome[] terrains = ffGenerator.terrains;
-        for (int i = 0; i < terrains.Length; i++)
+        ClearBiomes();
+
+        for (int i = 0; i < 6; i++)
         {
-            var biomes = terrains[i].biomes;
+            terrainBiomes[i].PopulateBiome();
+
+            Biome[] biomes = terrainBiomes[i].Biomes();
+
             for (int j = 0; j < biomes.Length; j++)
             {
-                var pos = biomes[j].Location - transform.position;
                 var block = Instantiate(
                     ffSettings.biomeObjects[biomes[j].BiomeIndex],
                     transform.position,
                     Quaternion.FromToRotation(Vector3.up, biomes[j].Location)
-                    );
-                biomes[j].BiomeObject = block;
+                );
 
                 // random facing
                 block.transform.Rotate(0f, Random.Range(0, 90), 0f, Space.Self);
@@ -162,8 +219,25 @@ public class ProceduralPlanet : MonoBehaviour
 
                 // put the object under moon gravity
                 block.GetComponent<GravityBodyController>().AttachBody(this.GetComponent<GravityController>());
-                block.transform.SetParent(this.transform);
+                block.transform.SetParent(biomesContainer.transform);
             }
         }
+    }
+    private void ClearBiomes()
+    {
+        if (biomesContainer != null)
+        {
+            if (Application.isEditor)
+            {
+                DestroyImmediate(biomesContainer.gameObject);
+            }
+            else
+            {
+                Destroy(biomesContainer.gameObject);
+            }
+            biomesContainer = null;
+        }
+        biomesContainer = new GameObject("biomes " + gameObject.name);
+        biomesContainer.transform.SetParent(transform);
     }
 }

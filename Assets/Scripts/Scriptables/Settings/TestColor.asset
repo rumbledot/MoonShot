@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: TestColor
   m_EditorClassIdentifier: 
   planetMaterial: {fileID: 2100000, guid: ce31d684e30baa040b37c7e2f5ed697a, type: 2}
+  atmosphereMaterial: {fileID: 2100000, guid: 91365bde2c389c542a58c0f4fe8259c4, type: 2}
   biomeColorSettings:
     biomes:
     - gradient:
@@ -101,6 +102,30 @@ MonoBehaviour:
     noiseOffset: 0.42
     noiseStrength: 0.21
     blendAmount: 0.478
+  atmosphereColorSettings:
+    streaks: []
+    noise:
+      filterType: 0
+      simpleNoiseSettings:
+        strength: 1
+        numLayers: 3
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        center: {x: 0, y: 0, z: 0}
+        minValue: 0
+      rigidNoiseSettings:
+        strength: 1
+        numLayers: 3
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        center: {x: 0, y: 0, z: 0}
+        minValue: 0
+        weightMultiplyer: 0.8
+    noiseOffset: 0
+    noiseStrength: 0
+    blendAmount: 0
   oceanColor:
     serializedVersion: 2
     key0: {r: 0.07008722, g: 0.0828898, b: 0.1981132, a: 1}

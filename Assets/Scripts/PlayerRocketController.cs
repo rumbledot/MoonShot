@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
 public class PlayerRocketController : MonoBehaviour
 {
@@ -32,9 +31,6 @@ public class PlayerRocketController : MonoBehaviour
     bool isLanded = true;
     float h, v, x, y, z, speed = 25f, verticalLookRotation;
     Vector3 moveDir, targetMoveAmount, moveAmount, smoothMoveVelocity;
-
-    [SerializeField]
-    private CinemachineVirtualCamera vcam1;
 
     private void Start()
     {
@@ -108,7 +104,7 @@ public class PlayerRocketController : MonoBehaviour
                 player.transform.parent = null;
                 player.GetComponent<PlayerController>().enabled = true;
                 player.GetComponent<PlayerController>().isInsideRocket = false;
-                CinemachineBrain.SoloCamera = vcam1;
+                stats.SetCameraTo(GameController.WhosCamera.Ken);
                 this.enabled = false;
             }
         }

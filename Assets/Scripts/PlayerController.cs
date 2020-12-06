@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -32,11 +31,6 @@ public class PlayerController : MonoBehaviour
     GravityBodyController thisBody;
     Rigidbody playerRB;
 
-    [SerializeField]
-    CinemachineVirtualCamera vcam1;
-    [SerializeField]
-    CinemachineVirtualCamera vcam2;
-
     GameController stats;
     Animator anim;
 
@@ -45,8 +39,8 @@ public class PlayerController : MonoBehaviour
         thisBody = GetComponent<GravityBodyController>();
         playerRB = gameObject.GetComponent<Rigidbody>();
         stats = GameController.instance;
+        stats.SetCameraTo(GameController.WhosCamera.Ken);
         anim = gameObject.GetComponent<Animator>();
-        CinemachineBrain.SoloCamera = vcam1;
         GameController.instance.displayGuide("Player");
     }
 
@@ -71,10 +65,10 @@ public class PlayerController : MonoBehaviour
             thisBody.DetachBody();
             isInsideRocket = true;
             stats.displayText("Press SPACE to take off");
-            CinemachineBrain.SoloCamera = vcam2;
             stats.Rocket.GetComponent<PlayerRocketController>().enabled = true;
             stats.Rocket.GetComponent<PlayerRocketController>().ShowPlayerDummy(true);
             stats.Rocket.GetComponent<Rigidbody>().isKinematic = false;
+            stats.SetCameraTo(GameController.WhosCamera.Rocket);
             gameObject.SetActive(false);
         }
     }

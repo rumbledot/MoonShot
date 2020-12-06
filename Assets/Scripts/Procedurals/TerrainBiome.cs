@@ -2,85 +2,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class TerrainBiome
 {
-    public Biome[] biomes;
-    int density;
+    FloraFaunaSettings settings;
+    Mesh mesh;
 
-    public TerrainBiome(int density)
+    Biome[] biomes;
+
+    public TerrainBiome(FloraFaunaSettings settings, Mesh mesh)
     {
-        this.density = density;
-        biomes = new Biome[density];
+        this.settings = settings;
+        this.mesh = mesh;
+
+        biomes = new Biome[settings.density];
     }
-    [System.Serializable]
-    public class Biome
+    public void PopulateBiome()
     {
-        Vector3 location;
-        public Vector3 Location
+        Vector3[] vertices = mesh.vertices;
+
+        List<int> filled = new List<int>();
+        int pickedVertice = 0;
+        int pickedObjIndex = 0;
+
+        for (int i = 0; i < biomes.Length; i++)
         {
-            get
-            {
-                return location;
-            }
-            set
-            {
-                location = value;
-            }
-        }
-        int biomeIndex;
-        public int BiomeIndex
-        {
-            get
-            {
-                return biomeIndex;
-            }
-            set
-            {
-                biomeIndex = value;
-            }
-        }
-        GameObject biomeObject;
-        public GameObject BiomeObject
-        {
-            get 
-            {
-                return biomeObject;
-            }
-            set 
-            {
-                biomeObject = value;
-            }
-        }
-        public Biome(Vector3 l, int objIndex)
-        {
-            location = l;
-            biomeIndex = objIndex;
+            pickedVertice = (int)Random.Range(0, vertices.Length);
+            if (filled.Contains(pickedVertice)) continue;
+
+            pickedObjIndex = (settings.biomeObjects.Length > 1) ? (int)Random.Range(0, settings.biomeObjects.Length) : 0;
+
+            Biome biome = new Biome(vertices[pickedVertice], pickedObjIndex);
+
+            biomes[i] = biome;
         }
     }
-    public void AddBiome(int index, Vector3 l, int objIndex)
+    public Biome[] Biomes()
     {
-        Biome b = new Biome(l, objIndex);
-        biomes[index] = b;
-    }
-    public void Reset()
-    {
-        this.density = density;
-        biomes = new Biome[density];
-        if (biomes != null && biomes.Length > 0)
-        {
-            for (int i = 0; i < biomes.Length; i++)
-            {
-                if (biomes[i].BiomeObject)
-                {
-                    try
-                    {
-                        biomes[i].BiomeObject.gameObject.GetComponent<GravityBodyController>().destroySelf();
-                    }
-                    catch(Exception e)
-                    {  }
-                }
-            }
-        }
+        return biomes;
     }
 }

@@ -16,4 +16,4 @@ MonoBehaviour:
   - {fileID: 4281707189576022683, guid: 74ca802209a58c24fb5a026364667c60, type: 3}
   - {fileID: 917975739909952216, guid: e36c5af4e2f1e5840aeed506db60303a, type: 3}
   - {fileID: 158296271024336252, guid: 518932c22dc32774fbfcf34ebc260449, type: 3}
-  density: 0
+  density: 20

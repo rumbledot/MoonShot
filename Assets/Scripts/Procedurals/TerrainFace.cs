@@ -36,8 +36,6 @@ public class TerrainFace
     public void ConstructMesh()
     {
         Vector3[] vertices = new Vector3[resolution * resolution];
-        Vector3[] PoUS = new Vector3[resolution * resolution];
-        Vector3[] verts = new Vector3[resolution * resolution];
         int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
         int triIndex = 0;
         Vector2[] uv = (mesh.uv.Length == vertices.Length) ? mesh.uv : new Vector2[vertices.Length];
@@ -52,7 +50,7 @@ public class TerrainFace
                 Vector3 pointOnUnitCube = localUp + (percent.x - 0.5f) * 2 * axisA + (percent.y - 0.5f) * 2 * axisB;
                 Vector3 pointOnUnitSphere = pointOnUnitCube.normalized;
                 float unscaledElevation = shapeGenerator.CalculateUnscaledElevation(pointOnUnitSphere);
-                vertices[i] = (pointOnUnitSphere * shapeGenerator.GetScaledElevation(unscaledElevation)) + center.position;
+                vertices[i] = pointOnUnitSphere * shapeGenerator.GetScaledElevation(unscaledElevation);
                 uv[i].y = unscaledElevation;
 
                 if (x != resolution - 1 && y != resolution - 1)
@@ -74,7 +72,7 @@ public class TerrainFace
         mesh.RecalculateNormals();
         mesh.uv = uv;
 
-        ffGenerator.PopulateTerrain(vertices, index, center);
+        //ffGenerator.PopulateTerrain(vertices, index, center);
     }
     public void UpdateUVs(ColorGenerator colorGenerator)
     {

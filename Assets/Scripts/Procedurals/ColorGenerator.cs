@@ -7,7 +7,7 @@ using UnityEngine;
 public class ColorGenerator
 {
     ColorSettings settings;
-    Texture2D texture;
+    Texture2D texture, atmoTexture;
     const int textureResolution = 50;
     INoiseFilter biomeNoiseFilter;
 
@@ -19,6 +19,10 @@ public class ColorGenerator
             texture = new Texture2D(textureResolution * 2, settings.biomeColorSettings.biomes.Length, TextureFormat.RGBA32, false);
         }
         biomeNoiseFilter = NoiseFilterFactory.CreateNoiseFilter(settings.biomeColorSettings.noise);
+        if (atmoTexture == null || atmoTexture.height != settings.atmosphereColorSettings.streaks.Length)
+        {
+            atmoTexture = new Texture2D(textureResolution, settings.atmosphereColorSettings.streaks.Length, TextureFormat.RGBA32, false);
+        }
     }
     public void UpdateElevation(MinMax elevationMinMax)
     {
@@ -69,5 +73,43 @@ public class ColorGenerator
         texture.Apply();
         // pass this to shader
         settings.planetMaterial.SetTexture("_texture", texture);
+    }
+    public float AtmospherePercentFromPoint(Vector3 pointOnUnitSphere)
+    {
+        float heightPercent = (pointOnUnitSphere.y + 1) / 2f;
+        heightPercent += (biomeNoiseFilter.Evaluate(pointOnUnitSphere) - settings.biomeColorSettings.noiseOffset) * settings.biomeColorSettings.noiseStrength;
+        float streakIndex = 0;
+        int numStreaks = settings.atmosphereColorSettings.streaks.Length;
+        float blendRange = settings.atmosphereColorSettings.blendAmount / 2f + 0.001f;
+
+        for (int i = 0; i < numStreaks; i++)
+        {
+            float dst = heightPercent - settings.atmosphereColorSettings.streaks[i].startHeight;
+            float weight = Mathf.InverseLerp(-blendRange, blendRange, dst);
+            streakIndex *= (1 - weight);
+            streakIndex += i * weight;
+        }
+
+        return streakIndex / Mathf.Max(1, numStreaks - 1);
+    }
+    public void UpdateCloudColors()
+    {
+        Color[] colors = new Color[atmoTexture.width * atmoTexture.height];
+        int colorIndex = 0;
+        foreach (var cloud in settings.atmosphereColorSettings.streaks)
+        {
+            for (int i = 0; i < textureResolution; i++)
+            {
+                Color gradientCol;
+                gradientCol = cloud.cloudColor;
+                Color tintCol = cloud.tint;
+                colors[colorIndex] = gradientCol * (1 - cloud.tintPercent) + tintCol * cloud.tintPercent;
+                colorIndex++;
+            }
+        }
+        atmoTexture.SetPixels(colors);
+        atmoTexture.Apply();
+        // pass this to shader
+        settings.atmosphereMaterial.SetTexture("_texture", atmoTexture);
     }
 }

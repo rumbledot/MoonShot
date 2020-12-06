@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   biomeObjects:
   - {fileID: 6936739446188586261, guid: 6d2241a1aaca616429ec4d36e6b95ce2, type: 3}
-  density: 2
+  density: 1

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: DesertColor
   m_EditorClassIdentifier: 
   planetMaterial: {fileID: 2100000, guid: f6e5dba8c19e7984ba0b93783f5e9ce1, type: 2}
+  atmosphereMaterial: {fileID: 2100000, guid: bf4ea226634672742b7c9a076aef0e47, type: 2}
   biomeColorSettings:
     biomes:
     - gradient:
@@ -47,6 +48,30 @@ MonoBehaviour:
       tint: {r: 0, g: 0, b: 0, a: 0}
       startHeight: 0
       tintPercent: 0
+    noise:
+      filterType: 0
+      simpleNoiseSettings:
+        strength: 1
+        numLayers: 3
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        center: {x: 0, y: 0, z: 0}
+        minValue: 0
+      rigidNoiseSettings:
+        strength: 1
+        numLayers: 3
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        center: {x: 0, y: 0, z: 0}
+        minValue: 0
+        weightMultiplyer: 0.8
+    noiseOffset: 0
+    noiseStrength: 0
+    blendAmount: 0
+  atmosphereColorSettings:
+    streaks: []
     noise:
       filterType: 0
       simpleNoiseSettings:
